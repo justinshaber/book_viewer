@@ -13,6 +13,15 @@
       <% @results.each do |chapter| %>
         <li>
           <a href="/chapters/<%= chapter[:number] %>" class="pure-menu-link"><%= chapter[:title] %></a>
+            <ul>
+              <% chapter[:paragraphs].each do |paragraph| %>
+                <li>
+                  <a href="/chapters/<%= chapter[:number] %>/#<%= paragraph[:num] %>">
+                    <%= paragraph[:content] %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
         </li>
       <% end %>
     </ul>
