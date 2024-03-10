@@ -13,31 +13,35 @@ helpers do
     end.join
   end
 
-  def each_chapter
-    @contents.each_with_index do |title, num|
-      num += 1
-      chapter = File.read "data/chp#{num}.txt"
-      yield title, num, chapter
+  def highlight(text, query)
+    text.gsub(/(#{query})/i, "<strong>#{query}</strong>")
+  end
+end
+
+def each_chapter
+  @contents.each_with_index do |title, num|
+    num += 1
+    chapter = File.read "data/chp#{num}.txt"
+    yield title, num, chapter
+  end
+end
+
+def search_chapters(query)
+  results = []
+
+  return results if !query || query.empty?
+
+  each_chapter do |title, num, content|
+    paragraphs = []
+
+    content.split("\n\n").each_with_index do |paragraph, idx|
+      paragraphs << { :num => idx + 1, :content => paragraph } if paragraph.include? query
     end
+    
+    results << { :title => title, :number => num, :paragraphs => paragraphs } if paragraphs.any?
   end
 
-  def search_chapters(query)
-    results = []
-
-    return results if !query || query.empty?
-
-    each_chapter do |title, num, content|
-      paragraphs = []
-
-      content.split("\n\n").each_with_index do |paragraph, idx|
-        paragraphs << { :num => idx + 1, :content => paragraph } if paragraph.include? query
-      end
-      
-      results << { :title => title, :number => num, :paragraphs => paragraphs } if paragraphs.any?
-    end
-
-    results
-  end
+  results
 end
 
 not_found do
